@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/prashantbhardwaj30/kya-rails/blob/main/spec/schemas/authority.schema.json",
+  "title": "KYA authority: what the agent may do",
+  "description": "Maps to MAS KYA item (b) 'what authority it has been given' and to the SAFR 'Authorisation' control category (who may delegate to whom, to what depth, which action types). Our interpretation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["granted_by", "permitted_actions", "delegation", "revocation"],
+  "properties": {
+    "granted_by": { "$ref": "common.schema.json#/$defs/principalRef" },
+    "permitted_actions": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": { "$ref": "common.schema.json#/$defs/actionType" }
+    },
+    "delegation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["depth", "max_depth"],
+      "properties": {
+        "depth": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "max_depth": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "chain": { "type": "array", "maxItems": 3, "items": { "$ref": "common.schema.json#/$defs/agentId" } }
+      }
+    },
+    "revocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["revocable", "status_list_index"],
+      "properties": {
+        "revocable": { "const": true, "description": "Authority that cannot be revoked is not accepted." },
+        "status_list_index": { "type": "integer", "minimum": 0 },
+        "endpoint": { "type": "string", "format": "uri", "pattern": "^https://" }
+      }
+    }
+  }
+}

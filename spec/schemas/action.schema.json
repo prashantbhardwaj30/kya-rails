@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/prashantbhardwaj30/kya-rails/blob/main/spec/schemas/action.schema.json",
+  "title": "KYA action envelope",
+  "description": "What the agent proposes to do, why, and how it got there. Modelled on the SAFR 'governance envelope': action, action trace, context metadata. Signed by the agent's own key.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["action_id", "manifest_id", "agent_id", "action_type", "requested_at", "params", "instruction", "trace", "proof"],
+  "properties": {
+    "action_id": { "type": "string", "pattern": "^act_[a-z0-9]{6,40}$" },
+    "manifest_id": { "type": "string", "pattern": "^urn:kya:manifest:[a-z0-9-]{8,64}$" },
+    "agent_id": { "$ref": "common.schema.json#/$defs/agentId" },
+    "action_type": { "$ref": "common.schema.json#/$defs/actionType" },
+    "requested_at": { "$ref": "common.schema.json#/$defs/datetime" },
+    "params": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["amount_paise", "currency", "purpose"],
+      "properties": {
+        "amount_paise": { "$ref": "common.schema.json#/$defs/paise" },
+        "currency": { "const": "INR" },
+        "purpose": { "$ref": "common.schema.json#/$defs/purpose" },
+        "payee": { "$ref": "common.schema.json#/$defs/payee" },
+        "merchant_category": { "$ref": "common.schema.json#/$defs/mcc" },
+        "data_categories": { "type": "array", "uniqueItems": true, "items": { "$ref": "common.schema.json#/$defs/dataCategory" } }
+      }
+    },
+    "instruction": {
+      "type": "object",
+      "description": "The principal's initiating instruction, captured by the channel, not by the agent.",
+      "additionalProperties": false,
+      "required": ["channel", "text", "received_at"],
+      "properties": {
+        "channel": { "enum": ["app", "whatsapp", "voice", "api"] },
+        "text": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "received_at": { "$ref": "common.schema.json#/$defs/datetime" }
+      }
+    },
+    "trace": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["step", "kind", "source", "summary"],
+        "properties": {
+          "step": { "type": "integer", "minimum": 1 },
+          "kind": { "enum": ["tool_call", "retrieval", "user_message", "model_output"] },
+          "source": { "enum": ["principal", "tool", "untrusted_web", "untrusted_document"] },
+          "summary": { "type": "string", "maxLength": 200 },
+          "content": { "type": "string", "maxLength": 2000 }
+        }
+      }
+    },
+    "proof": { "$ref": "common.schema.json#/$defs/proof" }
+  }
+}

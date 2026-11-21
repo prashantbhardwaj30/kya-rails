@@ -1,0 +1,31 @@
+{
+  "action_id": "act_mc0001",
+  "manifest_id": "urn:kya:manifest:paybharat-merchant-01",
+  "agent_id": "did:web:agents.paybharat-psp.example:kolhapuri-house",
+  "action_type": "payment.link_create",
+  "requested_at": "2026-11-21T10:30:00+05:30",
+  "params": {
+    "amount_paise": 189900,
+    "currency": "INR",
+    "purpose": "merchant_collection",
+    "merchant_category": "5661"
+  },
+  "instruction": {
+    "channel": "whatsapp",
+    "text": "Customer: I'll take the tan Kolhapuri chappals, size 9. Send me the payment link.",
+    "received_at": "2026-11-21T10:28:40+05:30"
+  },
+  "trace": [
+    {
+      "step": 1,
+      "kind": "tool_call",
+      "source": "tool",
+      "summary": "catalogue.get(KH-TAN-09) -> Rs 1,899, in stock"
+    }
+  ],
+  "proof": {
+    "alg": "EdDSA",
+    "kid": "did:web:agents.paybharat-psp.example:kolhapuri-house#key-1",
+    "jws": "eyJhbGciOiJFZERTQSIsImtpZCI6ImRpZDp3ZWI6YWdlbnRzLnBheWJoYXJhdC1wc3AuZXhhbXBsZTprb2xoYXB1cmktaG91c2Uja2V5LTEiLCJ0eXAiOiJreWEtYWN0aW9uK2p3cyJ9..u1EodxG9pGOrBL-u1Ft_ZPd5__Oa9xLOur4TfquIYY5f9Lsw2AgKlfHyrjTFV0guvzxKKRhpsuraOVar7dP4Aw"
+  }
+}

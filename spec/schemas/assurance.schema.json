@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/prashantbhardwaj30/kya-rails/blob/main/spec/schemas/assurance.schema.json",
+  "title": "KYA assurance: provenance and reliability",
+  "description": "Maps to MAS KYA item (d) 'what assurance exists about its provenance and reliability'. The brief named four pillars; MAS's keynote lists this fifth one, so it is included. Tiers are our interpretation of 'controls proportionate to authority'.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["trust_tier", "provenance", "attestation", "evaluations"],
+  "properties": {
+    "trust_tier": { "enum": ["T1", "T2", "T3"], "description": "T1 = self-attested, low value. T2 = third-party audited. T3 = audited and tested in a regulator sandbox." },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["build_digest", "source_uri"],
+      "properties": {
+        "build_digest": { "$ref": "common.schema.json#/$defs/digest" },
+        "source_uri": { "type": "string", "format": "uri", "pattern": "^https://" },
+        "model_disclosure": { "type": "string", "maxLength": 120 }
+      }
+    },
+    "attestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scheme", "by", "at"],
+      "properties": {
+        "scheme": { "enum": ["self_attested", "third_party_audit", "regulator_sandbox"] },
+        "by": { "type": "string", "maxLength": 120 },
+        "at": { "$ref": "common.schema.json#/$defs/datetime" }
+      }
+    },
+    "evaluations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["suite", "run_at", "passed"],
+        "properties": {
+          "suite": { "type": "string", "maxLength": 80 },
+          "run_at": { "$ref": "common.schema.json#/$defs/datetime" },
+          "passed": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

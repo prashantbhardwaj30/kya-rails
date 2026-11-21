@@ -1,0 +1,127 @@
+{
+  "kya_version": "0.1",
+  "manifest_id": "urn:kya:manifest:sahyadri-underwriting-01",
+  "issuer": "did:web:kya.sahyadri-finance.example",
+  "issued_at": "2026-11-20T09:00:00+05:30",
+  "expires_at": "2027-02-18T09:00:00+05:30",
+  "identity": {
+    "agent_id": "did:web:agents.sahyadri-finance.example:underwriting",
+    "agent_name": "Credit-Saathi Underwriting Agent",
+    "agent_version": "1.4.0",
+    "developer": {
+      "legal_name": "Sahyadri Finance Ltd (fictional NBFC)",
+      "registration": {
+        "scheme": "CIN",
+        "value": "U65999MH2019PLC000001"
+      }
+    },
+    "operator": {
+      "legal_name": "Sahyadri Finance Ltd (fictional NBFC)",
+      "registration": {
+        "scheme": "CIN",
+        "value": "U65999MH2019PLC000001"
+      }
+    },
+    "public_key": {
+      "kty": "OKP",
+      "crv": "Ed25519",
+      "x": "vKXJtqfGgVdVMnGd5fIqN9PCeuLoheCl8Wb-0CA8y_4",
+      "kid": "did:web:agents.sahyadri-finance.example:underwriting#key-1"
+    },
+    "hosting_region": "IN"
+  },
+  "representation": {
+    "principal_type": "individual",
+    "principal_ref": "sha256:8bb69daf89ef1c702d3073aae4b7cddc74fc00492b2d4a48ff3ec5f405bddf87",
+    "principal_display": "R***a S.",
+    "binding": {
+      "method": "aa_consent",
+      "bound_at": "2026-11-20T08:55:00+05:30",
+      "device_bound": true,
+      "binding_ref": "aa-consent-handle-fictional-7731"
+    },
+    "kyc": {
+      "status": "ckyc_verified",
+      "verified_by": "Sahyadri Finance Ltd (fictional NBFC)",
+      "verified_at": "2026-11-20T08:40:00+05:30"
+    }
+  },
+  "authority": {
+    "granted_by": "sha256:8bb69daf89ef1c702d3073aae4b7cddc74fc00492b2d4a48ff3ec5f405bddf87",
+    "permitted_actions": [
+      "credit_report.pull"
+    ],
+    "delegation": {
+      "depth": 0,
+      "max_depth": 0
+    },
+    "revocation": {
+      "revocable": true,
+      "status_list_index": 1041,
+      "endpoint": "https://kya.sahyadri-finance.example/status/1"
+    }
+  },
+  "mandate": {
+    "mandate_id": "mdt_uw20261120a",
+    "purpose": [
+      "loan_underwriting"
+    ],
+    "purpose_text": "Pull one bureau report and income proof to underwrite a personal loan application.",
+    "valid_from": "2026-11-20T09:00:00+05:30",
+    "valid_until": "2026-12-20T09:00:00+05:30",
+    "limits": {
+      "currency": "INR",
+      "per_txn_max_paise": 0,
+      "aggregate_max_paise": 0,
+      "max_txn_per_day": 2,
+      "human_approval_above_paise": 0
+    },
+    "allowed_merchant_categories": [],
+    "allowed_payees": [],
+    "consent": {
+      "consent_id": "cns_uw7731",
+      "purposes": [
+        "loan_underwriting"
+      ],
+      "data_categories": [
+        "identity",
+        "credit_bureau_report",
+        "income_proof"
+      ],
+      "consent_manager": "Fictional Consent Manager Pvt Ltd",
+      "given_at": "2026-11-20T08:55:00+05:30",
+      "expires_at": "2026-12-20T08:55:00+05:30",
+      "withdrawn": false
+    }
+  },
+  "assurance": {
+    "trust_tier": "T2",
+    "provenance": {
+      "build_digest": "sha256:21b6eff1648832e8b0be3955f6f2df572589af7dcb5e8be976c85efdd2740be0",
+      "source_uri": "https://git.sahyadri-finance.example/agents/releases",
+      "model_disclosure": "Hosted LLM, version pinned per release"
+    },
+    "attestation": {
+      "scheme": "third_party_audit",
+      "by": "Fictional Assurance LLP",
+      "at": "2026-11-15T12:00:00+05:30"
+    },
+    "evaluations": [
+      {
+        "suite": "prompt-injection-redteam-v3",
+        "run_at": "2026-11-14T18:00:00+05:30",
+        "passed": true
+      },
+      {
+        "suite": "mandate-boundary-tests-v2",
+        "run_at": "2026-11-14T18:30:00+05:30",
+        "passed": true
+      }
+    ]
+  },
+  "proof": {
+    "alg": "EdDSA",
+    "kid": "did:web:kya.sahyadri-finance.example#key-1",
+    "jws": "eyJhbGciOiJFZERTQSIsImtpZCI6ImRpZDp3ZWI6a3lhLnNhaHlhZHJpLWZpbmFuY2UuZXhhbXBsZSNrZXktMSIsInR5cCI6Imt5YS1tYW5pZmVzdCtqd3MifQ..1EUzdcXB0IRjjz64eZoIu0dMuELc2WgRmjK6djd5AJRDYsN0XO8elgBmQjNS3Qjydj5jCIqZAu6YN5NxHSz-Cw"
+  }
+}

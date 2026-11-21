@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/prashantbhardwaj30/kya-rails/blob/main/spec/schemas/common.schema.json",
+  "title": "KYA common definitions",
+  "description": "Shared types. Amounts are integer paise so canonical JSON never contains floats.",
+  "$defs": {
+    "datetime": { "type": "string", "format": "date-time", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$" },
+    "agentId": {
+      "type": "string",
+      "description": "did:web identifier or a KYA URN. Fictional examples use the reserved .example TLD (RFC 2606).",
+      "pattern": "^(did:web:[a-z0-9.-]+(:[A-Za-z0-9._-]+)*|urn:kya:agent:[a-z0-9-]+:[a-z0-9-]+)$",
+      "maxLength": 200
+    },
+    "principalRef": {
+      "type": "string",
+      "description": "Salted SHA-256 of the principal's KYC identifier. Raw PAN or Aadhaar numbers never appear in a manifest (data minimisation).",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "paise": { "type": "integer", "minimum": 0, "maximum": 100000000000 },
+    "actionType": {
+      "type": "string",
+      "enum": ["credit_report.pull", "loan.disburse", "payment.upi_p2m", "payment.reserve_debit", "payment.link_create"]
+    },
+    "purpose": {
+      "type": "string",
+      "description": "Purpose codes used for both mandate scope and DPDP consent purpose limitation. Our own vocabulary.",
+      "enum": ["loan_underwriting", "loan_disbursal", "household_purchase", "merchant_collection", "marketing"]
+    },
+    "dataCategory": {
+      "type": "string",
+      "enum": ["identity", "contact", "credit_bureau_report", "bank_statement", "income_proof", "transaction_history"]
+    },
+    "mcc": { "type": "string", "description": "ISO 18245 merchant category code.", "pattern": "^[0-9]{4}$" },
+    "payee": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "value"],
+      "properties": {
+        "type": { "enum": ["vpa", "bank_account_ref"] },
+        "value": { "type": "string", "minLength": 3, "maxLength": 256 },
+        "label": { "type": "string", "maxLength": 80 }
+      },
+      "if": { "properties": { "type": { "const": "vpa" } } },
+      "then": { "properties": { "value": { "pattern": "^[A-Za-z0-9._-]{2,256}@[A-Za-z]{2,64}$" } } },
+      "else": { "properties": { "value": { "pattern": "^acct:[A-Z]{4}0[A-Z0-9]{6}:x{4,14}[0-9]{4}$" } } }
+    },
+    "proof": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["alg", "kid", "jws"],
+      "properties": {
+        "alg": { "const": "EdDSA" },
+        "kid": { "type": "string", "minLength": 3, "maxLength": 120 },
+        "jws": { "type": "string", "description": "Compact JWS with detached payload (RFC 7515 Appendix F).", "pattern": "^[A-Za-z0-9_-]+\\.\\.[A-Za-z0-9_-]+$" }
+      }
+    }
+  }
+}

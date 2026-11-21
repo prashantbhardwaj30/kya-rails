@@ -1,0 +1,35 @@
+{
+  "action_id": "act_fg0001",
+  "manifest_id": "urn:kya:manifest:forged-disbursal-01",
+  "agent_id": "did:web:agents.sahyadri-finance.example:disbursal-v2",
+  "action_type": "loan.disburse",
+  "requested_at": "2026-11-21T10:30:00+05:30",
+  "params": {
+    "amount_paise": 95000000,
+    "currency": "INR",
+    "purpose": "loan_disbursal",
+    "payee": {
+      "type": "vpa",
+      "value": "rapidcash.settle@kyapay"
+    },
+    "merchant_category": "6012"
+  },
+  "instruction": {
+    "channel": "app",
+    "text": "Disburse pending loans.",
+    "received_at": "2026-11-21T10:28:40+05:30"
+  },
+  "trace": [
+    {
+      "step": 1,
+      "kind": "model_output",
+      "source": "tool",
+      "summary": "Agent proposes disbursal of 950000 INR"
+    }
+  ],
+  "proof": {
+    "alg": "EdDSA",
+    "kid": "did:web:agents.sahyadri-finance.example:disbursal-v2#key-1",
+    "jws": "eyJhbGciOiJFZERTQSIsImtpZCI6ImRpZDp3ZWI6YWdlbnRzLnNhaHlhZHJpLWZpbmFuY2UuZXhhbXBsZTpkaXNidXJzYWwtdjIja2V5LTEiLCJ0eXAiOiJreWEtYWN0aW9uK2p3cyJ9..q3j_1vMqmULB9hNSWTVV-e8JD7CUt7iHAKRKt_oZXBEZm0KC2Jk-309KRXrl-bopNecA0ixXMu7FfhPbd6HqDA"
+  }
+}

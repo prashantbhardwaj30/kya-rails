@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/prashantbhardwaj30/kya-rails/blob/main/spec/schemas/manifest.schema.json",
+  "title": "KYA agent manifest",
+  "description": "A signed credential an issuer (for example the regulated entity that onboards the agent) gives an agent. Five sections follow the five information items in the MAS KYA announcement of 19 Nov 2026.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kya_version", "manifest_id", "issuer", "issued_at", "expires_at", "identity", "representation", "authority", "mandate", "assurance", "proof"],
+  "properties": {
+    "kya_version": { "const": "0.1" },
+    "manifest_id": { "type": "string", "pattern": "^urn:kya:manifest:[a-z0-9-]{8,64}$" },
+    "issuer": { "type": "string", "pattern": "^did:web:[a-z0-9.-]+$" },
+    "issued_at": { "$ref": "common.schema.json#/$defs/datetime" },
+    "expires_at": { "$ref": "common.schema.json#/$defs/datetime" },
+    "identity": { "$ref": "identity.schema.json" },
+    "representation": { "$ref": "representation.schema.json" },
+    "authority": { "$ref": "authority.schema.json" },
+    "mandate": { "$ref": "mandate.schema.json" },
+    "assurance": { "$ref": "assurance.schema.json" },
+    "proof": { "$ref": "common.schema.json#/$defs/proof" }
+  }
+}

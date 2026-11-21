@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/prashantbhardwaj30/kya-rails/blob/main/spec/schemas/representation.schema.json",
+  "title": "KYA representation: whom the agent represents",
+  "description": "Maps to MAS KYA item (a) 'whom it represents' and to Experian's 'human-to-agent binding' idea. Our interpretation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["principal_type", "principal_ref", "principal_display", "binding", "kyc"],
+  "properties": {
+    "principal_type": { "enum": ["individual", "business"] },
+    "principal_ref": { "$ref": "common.schema.json#/$defs/principalRef" },
+    "principal_display": { "type": "string", "maxLength": 40, "description": "Masked display name only, e.g. 'R***a S.'", "pattern": "^[^0-9]*\\*[^0-9]*$" },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "bound_at", "device_bound"],
+      "properties": {
+        "method": { "enum": ["upi_pin_mandate", "aa_consent", "otp_device_bound", "video_kyc", "digilocker_esign", "board_resolution"] },
+        "bound_at": { "$ref": "common.schema.json#/$defs/datetime" },
+        "device_bound": { "type": "boolean" },
+        "binding_ref": { "type": "string", "maxLength": 120 }
+      }
+    },
+    "kyc": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "verified_by", "verified_at"],
+      "properties": {
+        "status": { "enum": ["ckyc_verified", "full_kyc", "min_kyc", "kyb_verified"] },
+        "verified_by": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "verified_at": { "$ref": "common.schema.json#/$defs/datetime" }
+      }
+    }
+  }
+}

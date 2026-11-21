@@ -1,0 +1,42 @@
+{
+  "action_id": "act_db0001",
+  "manifest_id": "urn:kya:manifest:sahyadri-disbursal-01",
+  "agent_id": "did:web:agents.sahyadri-finance.example:disbursal",
+  "action_type": "loan.disburse",
+  "requested_at": "2026-11-21T10:30:00+05:30",
+  "params": {
+    "amount_paise": 15000000,
+    "currency": "INR",
+    "purpose": "loan_disbursal",
+    "payee": {
+      "type": "bank_account_ref",
+      "value": "acct:KYAB0000101:xxxxxx6789",
+      "label": "Borrower's verified salary account"
+    },
+    "merchant_category": "6012"
+  },
+  "instruction": {
+    "channel": "app",
+    "text": "Disburse the sanctioned loan of Rs 1,50,000 for application LA-55821 to the borrower's verified account.",
+    "received_at": "2026-11-21T10:28:40+05:30"
+  },
+  "trace": [
+    {
+      "step": 1,
+      "kind": "tool_call",
+      "source": "tool",
+      "summary": "los.get_sanction(LA-55821) -> sanctioned 150000 INR"
+    },
+    {
+      "step": 2,
+      "kind": "tool_call",
+      "source": "tool",
+      "summary": "penny_drop.verify(acct xxxx6789) -> name match 0.97"
+    }
+  ],
+  "proof": {
+    "alg": "EdDSA",
+    "kid": "did:web:agents.sahyadri-finance.example:disbursal#key-1",
+    "jws": "eyJhbGciOiJFZERTQSIsImtpZCI6ImRpZDp3ZWI6YWdlbnRzLnNhaHlhZHJpLWZpbmFuY2UuZXhhbXBsZTpkaXNidXJzYWwja2V5LTEiLCJ0eXAiOiJreWEtYWN0aW9uK2p3cyJ9..p7sHCnNxaVUTI2XH2FtcQ1w9rAAVRJFiCcJu8rBpQjQ6cq1NT8KhB3aEGSL86_XNQA6pajSRWynMM00zVd4gAQ"
+  }
+}
