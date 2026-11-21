@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kya-rails"
+version = "0.1.0"
+description = "Know Your Agent (KYA) reference implementation for Indian BFSI: signed agent manifests, three fraud gates, SAFR-style dispositions and a hash-chained evidence trail."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Prashant Bhardwaj" }]
+requires-python = ">=3.11"
+keywords = ["agent-identity", "kya", "agentic-payments", "bfsi", "fraud-prevention", "mcp", "upi", "dpdp"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "License :: OSI Approved :: MIT License",
+  "Topic :: Office/Business :: Financial",
+  "Topic :: Security :: Cryptography",
+]
+# Four runtime dependencies, all widely audited. No cloud SDKs, no model SDKs.
+dependencies = [
+  "jsonschema>=4.21",
+  "cryptography>=42",
+  "fastapi>=0.110",
+  "uvicorn>=0.29",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "httpx>=0.27"]
+
+[project.urls]
+Homepage = "https://github.com/prashantbhardwaj30/kya-rails"
+
+[tool.setuptools]
+packages = ["kya", "gates", "adapters", "demo"]
+
+[tool.setuptools.package-data]
+demo = ["static/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

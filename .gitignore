@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+dist/
+build/
+.coverage
+htmlcov/
+# Local key material must never be committed. Demo keys are derived from public seeds in code.
+*.pem
+*.key
+.env
