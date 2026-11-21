@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+      - name: Tests (gates, schemas, evidence, adapters, demo API)
+        run: pytest -v
+      - name: Examples are reproducible and committed
+        run: |
+          python scripts/build_examples.py
+          git diff --exit-code spec/examples
+      - name: Gate CLIs run
+        run: |
+          python -m gates.identity_gate spec/examples/valid/loan-disbursal.manifest.json spec/examples/valid/loan-disbursal.action.json > /dev/null
+          python -m gates.mandate_gate spec/examples/valid/upi-agent-payment.action.json --manifest spec/examples/valid/upi-agent-payment.manifest.json > /dev/null
+          ! python -m gates.risk_gate spec/examples/attacks/injected-payee.action.json --manifest spec/examples/valid/loan-disbursal.manifest.json > /dev/null
