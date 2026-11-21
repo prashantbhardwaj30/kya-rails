@@ -39,18 +39,16 @@ REQUIRED_TIER = {"credit_report.pull": "T2", "loan.disburse": "T2", "payment.upi
                  "payment.reserve_debit": "T1", "payment.link_create": "T1"}
 
 
-def run(manifest: dict[str, Any], action: dict[str, Any], registry: TrustRegistry, now: datetime,
-        consume: bool = True) -> GateResult:
-    r = GateResult(GATE)
-
+def manifest_checks(manifest: dict[str, Any], registry: TrustRegistry, now: datetime,
+                    r: GateResult | None = None) -> GateResult:
+    """ID-001 and ID-003 to ID-007: everything that can be checked on the manifest alone.
+    Used at onboarding, before the agent has proposed any action."""
+    r = r or GateResult(GATE)
     m_errs = schema.errors("manifest", manifest)
     r.add("ID-001", "Manifest matches KYA schema", "fail" if m_errs else "pass",
           "; ".join(m_errs[:3]) if m_errs else "manifest.schema.json (draft 2020-12), strict")
-    a_errs = schema.errors("action", action)
-    r.add("ID-002", "Action envelope matches schema", "fail" if a_errs else "pass",
-          "; ".join(a_errs[:3]) if a_errs else "action.schema.json (draft 2020-12), strict")
-    if m_errs or a_errs:
-        return r  # SAFR: an envelope that fails identity is rejected immediately and logged
+    if m_errs:
+        return r
 
     issuer_did = manifest["issuer"]
     issuer = registry.issuers.get(issuer_did)
@@ -58,6 +56,18 @@ def run(manifest: dict[str, Any], action: dict[str, Any], registry: TrustRegistr
           "trusted issuer" if issuer else "issuer is not a trusted KYA issuer for this verifier",
           observed=issuer_did, expected=sorted(registry.issuers))
     if issuer is None:
+        # Impersonation check: does the signature verify under ANY key we trust?
+        matches = []
+        for did, known in registry.issuers.items():
+            try:
+                verify_detached(manifest, public_key_from_jwk(known.public_jwk), MANIFEST_TYP)
+                matches.append(did)
+            except SignatureError:
+                pass
+        r.add("ID-005", "Issuer signature verifies", "fail",
+              f"signature tried against all {len(registry.issuers)} trusted issuer keys: "
+              + (f"matches {matches}, but the issuer field was altered" if matches else "no match"),
+              observed=manifest["proof"]["kid"])
         return r
 
     granted = set(manifest["authority"]["permitted_actions"])
@@ -84,6 +94,19 @@ def run(manifest: dict[str, Any], action: dict[str, Any], registry: TrustRegistr
     revoked = registry.is_revoked(issuer_did, idx)
     r.add("ID-007", "Manifest is not revoked", "fail" if revoked else "pass",
           "revoked by principal or issuer" if revoked else "status list index not revoked", observed=idx)
+    return r
+
+
+def run(manifest: dict[str, Any], action: dict[str, Any], registry: TrustRegistry, now: datetime,
+        consume: bool = True) -> GateResult:
+    r = GateResult(GATE)
+    a_errs = schema.errors("action", action)
+    manifest_checks(manifest, registry, now, r)
+    r.add("ID-002", "Action envelope matches schema", "fail" if a_errs else "pass",
+          "; ".join(a_errs[:3]) if a_errs else "action.schema.json (draft 2020-12), strict")
+    r.checks.sort(key=lambda c: c.rule_id)
+    if r.decision == "FAIL" and {c.rule_id for c in r.checks if c.outcome == "fail"} & {"ID-001", "ID-002", "ID-003"}:
+        return r  # SAFR: an envelope that fails identity is rejected immediately and logged
 
     binds = action["manifest_id"] == manifest["manifest_id"] and action["agent_id"] == manifest["identity"]["agent_id"]
     r.add("ID-008", "Action is bound to this manifest and agent", "pass" if binds else "fail",

@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>kya-rails · Know Your Agent for Indian BFSI</title>
+<style>
+  :root {
+    --bg: #0b1220; --panel: #121b2e; --panel2: #18233a; --line: #26324a; --text: #e6ecf5; --muted: #93a1b8;
+    --green: #22c55e; --red: #ef4444; --amber: #f59e0b; --blue: #3b82f6; --violet: #a78bfa; --saffron: #ff9933;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.45 Inter, "Segoe UI", system-ui, sans-serif; }
+  header { display: flex; align-items: center; gap: 16px; padding: 14px 22px; border-bottom: 1px solid var(--line);
+           background: linear-gradient(90deg, #0e1730, #0b1220); position: sticky; top: 0; z-index: 5; }
+  .logo { font-weight: 800; font-size: 20px; letter-spacing: .2px; }
+  .logo b { color: var(--saffron); }
+  .tag { color: var(--muted); font-size: 13px; }
+  .spacer { flex: 1; }
+  .clock { font-family: var(--mono); font-size: 13px; color: var(--muted); border: 1px solid var(--line); padding: 4px 10px; border-radius: 999px; }
+  .btn { background: var(--panel2); color: var(--text); border: 1px solid var(--line); padding: 8px 12px; border-radius: 10px; cursor: pointer; font: inherit; font-size: 13px; }
+  .btn:hover { border-color: #3a4a6b; }
+  .btn.small { padding: 5px 9px; font-size: 12px; }
+  main { display: grid; grid-template-columns: 300px 1fr; gap: 18px; padding: 18px 22px 90px; }
+  nav { display: flex; flex-direction: column; gap: 6px; position: sticky; top: 70px; align-self: start; max-height: calc(100vh - 110px); overflow-y: auto; padding-right: 4px; }
+  .group { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; margin: 12px 4px 4px; }
+  .scn { text-align: left; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; cursor: pointer; color: var(--text); font: inherit; }
+  .scn:hover { border-color: #3a4a6b; }
+  .scn.active { border-color: var(--saffron); box-shadow: 0 0 0 1px var(--saffron) inset; }
+  .scn .t { font-weight: 650; display: flex; justify-content: space-between; gap: 8px; }
+  .scn .s { color: var(--muted); font-size: 12.5px; margin-top: 3px; }
+  .pill { font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 999px; white-space: nowrap; align-self: flex-start; }
+  .p-AUTO_EXECUTE, .p-PASS { background: rgba(34,197,94,.15); color: var(--green); }
+  .p-DENY, .p-FAIL { background: rgba(239,68,68,.15); color: var(--red); }
+  .p-ESCALATE, .p-REVIEW { background: rgba(245,158,11,.15); color: var(--amber); }
+  .p-OBSERVE { background: rgba(59,130,246,.15); color: var(--blue); }
+  section.card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+  .stage { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  h2 { margin: 0 0 10px; font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 650; }
+  .agent-name { font-size: 20px; font-weight: 750; }
+  .mono { font-family: var(--mono); font-size: 12.5px; color: var(--muted); word-break: break-all; }
+  .pillars { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin-top: 12px; }
+  .pillar { background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; min-width: 0; }
+  .pillar .k { font-size: 11px; color: var(--saffron); text-transform: uppercase; letter-spacing: .06em; font-weight: 700; }
+  .pillar .v { font-size: 12.5px; margin-top: 4px; overflow-wrap: anywhere; }
+  .say { background: var(--panel2); border-left: 3px solid var(--violet); border-radius: 8px; padding: 10px 12px; font-size: 15px; }
+  .proposed { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; margin-top: 12px; font-size: 14px; }
+  .proposed .k { color: var(--muted); }
+  .amount { font-size: 26px; font-weight: 800; }
+  .trace { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .step { font-size: 12.5px; padding: 6px 9px; border-radius: 8px; background: var(--panel2); border: 1px solid var(--line); }
+  .step.untrusted { border-color: rgba(239,68,68,.5); background: rgba(239,68,68,.07); }
+  .step .src { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .step .content { margin-top: 4px; color: #fca5a5; font-style: italic; }
+  .verdict { display: flex; align-items: center; gap: 18px; padding: 16px 20px; border-radius: 14px; border: 1px solid var(--line); }
+  .verdict .big { font-size: 34px; font-weight: 900; letter-spacing: .5px; }
+  .verdict .why { color: var(--muted); font-size: 14px; }
+  .v-AUTO_EXECUTE { background: rgba(34,197,94,.10); border-color: rgba(34,197,94,.5); } .v-AUTO_EXECUTE .big { color: var(--green); }
+  .v-DENY { background: rgba(239,68,68,.10); border-color: rgba(239,68,68,.55); } .v-DENY .big { color: var(--red); }
+  .v-ESCALATE { background: rgba(245,158,11,.10); border-color: rgba(245,158,11,.55); } .v-ESCALATE .big { color: var(--amber); }
+  .v-OBSERVE { background: rgba(59,130,246,.10); border-color: rgba(59,130,246,.55); } .v-OBSERVE .big { color: var(--blue); }
+  .gates { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .gate { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 12px; min-width: 0; }
+  .gate.notrun { opacity: .45; }
+  .gate .head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .gate .name { font-weight: 750; font-size: 15px; }
+  .chk { display: grid; grid-template-columns: 22px 62px 1fr; gap: 6px; align-items: start; padding: 6px 4px; border-top: 1px solid var(--line); font-size: 13px; }
+  .chk .ic { font-weight: 900; text-align: center; }
+  .chk .rid { font-family: var(--mono); font-size: 11.5px; color: var(--muted); padding-top: 1px; }
+  .chk .d { color: var(--muted); font-size: 12px; margin-top: 2px; overflow-wrap: anywhere; }
+  .o-pass .ic { color: var(--green); } .o-fail { background: rgba(239,68,68,.08); } .o-fail .ic, .o-fail .ti { color: #fca5a5; }
+  .o-review .ic { color: var(--amber); } .o-observe .ic { color: var(--blue); } .o-skip { opacity: .5; }
+  .rail pre, .json pre { margin: 0; font-family: var(--mono); font-size: 12px; color: #c7d2fe; white-space: pre-wrap; word-break: break-all; max-height: 260px; overflow: auto; }
+  .chain { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; }
+  .blk { flex: 0 0 auto; width: 148px; background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; padding: 8px; font-size: 11.5px; position: relative; }
+  .blk::after { content: "→"; position: absolute; right: -9px; top: 38%; color: var(--muted); }
+  .blk:last-child::after { content: ""; }
+  .blk .sq { font-weight: 800; }
+  .blk .h { font-family: var(--mono); color: var(--muted); font-size: 10.5px; }
+  .blk.bad { border-color: var(--red); background: rgba(239,68,68,.12); }
+  .blk.DENY { border-top: 3px solid var(--red); } .blk.AUTO_EXECUTE { border-top: 3px solid var(--green); }
+  .blk.ESCALATE { border-top: 3px solid var(--amber); } .blk.OBSERVE { border-top: 3px solid var(--blue); }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .verify-ok { color: var(--green); font-weight: 700; } .verify-bad { color: var(--red); font-weight: 700; }
+  .onb { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .caption { position: fixed; left: 50%; transform: translateX(-50%); bottom: 18px; background: rgba(0,0,0,.78); color: #fff; padding: 10px 18px;
+             border-radius: 10px; font-size: 18px; max-width: 80%; text-align: center; display: none; z-index: 9; }
+  .empty { color: var(--muted); padding: 40px; text-align: center; font-size: 16px; }
+  footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 6px 22px; font-size: 11.5px; color: var(--muted); background: #0a101d; border-top: 1px solid var(--line); }
+  @media (max-width: 1100px) { main { grid-template-columns: 1fr; } .hero, .gates, .onb { grid-template-columns: 1fr; } .pillars { grid-template-columns: repeat(2, 1fr); } }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">kya<b>-</b>rails</div>
+  <div class="tag">Know Your Agent · identity → mandate → risk → evidence</div>
+  <div class="spacer"></div>
+  <span class="clock" id="clock">demo clock</span>
+  <label class="tag"><input type="checkbox" id="capToggle"> Hinglish captions</label>
+  <button class="btn" id="resetBtn" title="Reset trust state and evidence log">Reset</button>
+</header>
+<main>
+  <nav id="nav"></nav>
+  <div class="stage" id="stage"><div class="empty">Pick a scenario on the left. Start with <b>Onboard four agents</b>.</div></div>
+</main>
+<div class="caption" id="caption"></div>
+<footer>Personal project by Prashant Bhardwaj. Not affiliated with CRIF, NPCI, MAS, Razorpay or Meta. All organisations and accounts are fictional; every rail is a mock. Demo keys are public.</footer>
+<script>
+const $ = (s, el = document) => el.querySelector(s);
+const esc = (v) => String(v ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const rs = (p) => { if (p == null) return "—"; const r = Math.floor(p / 100); return "₹" + r.toLocaleString("en-IN"); };
+const ICON = { pass: "✓", fail: "✕", review: "!", observe: "◉", skip: "–" };
+const LABEL = { AUTO_EXECUTE: "AUTO-EXECUTE", DENY: "DENY", ESCALATE: "ESCALATE", OBSERVE: "OBSERVE" };
+const WHY = {
+  AUTO_EXECUTE: "Within identity, mandate and risk thresholds. Sent to the (mock) rail with its evidence reference.",
+  DENY: "Rejected before execution. Nothing reaches the rail. Rule ids below are the reason on record.",
+  ESCALATE: "In scope, but above the autonomous threshold. Held for a human approver.",
+  OBSERVE: "Executes, flagged for later review.",
+};
+let SCN = [], current = null, captions = false;
+
+async function api(path, method = "GET") {
+  const r = await fetch(path, { method });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+function nav() {
+  const groups = {};
+  SCN.forEach(s => (groups[s.group] ||= []).push(s));
+  let html = "";
+  for (const [g, items] of Object.entries(groups)) {
+    html += `<div class="group">${esc(g)}</div>`;
+    html += items.map(s => `<button class="scn" data-id="${s.id}"><div class="t"><span>${esc(s.title)}</span>
+      <span class="pill p-${s.expect}">${esc(LABEL[s.expect] || s.expect)}</span></div><div class="s">${esc(s.subtitle)}</div></button>`).join("");
+  }
+  html += `<div class="group">4 · Audit</div>
+    <button class="scn" data-act="replay"><div class="t"><span>Replay last envelope</span><span class="pill p-DENY">DENY</span></div><div class="s">Resubmit the exact same signed action. ID-010 must catch it.</div></button>
+    <button class="scn" data-act="tamper"><div class="t"><span>Tamper with the log</span><span class="pill p-FAIL">BROKEN</span></div><div class="s">An insider flips a DENY to AUTO-EXECUTE. The hash chain exposes it.</div></button>`;
+  $("#nav").innerHTML = html;
+  $("#nav").querySelectorAll(".scn").forEach(b => b.onclick = () => b.dataset.act ? audit(b.dataset.act, b) : run(b.dataset.id, b));
+}
+
+function activate(btn) { window.scrollTo({ top: 0 }); document.querySelectorAll(".scn").forEach(b => b.classList.remove("active")); btn?.classList.add("active"); }
+function caption(text) { const c = $("#caption"); c.textContent = text || ""; c.style.display = captions && text ? "block" : "none"; }
+
+async function run(id, btn) {
+  activate(btn); current = id;
+  const s = SCN.find(x => x.id === id);
+  const data = await api(`/api/run/${id}`, "POST");
+  $("#clock").textContent = "demo clock " + data.demo_clock.replace("T", " ").slice(0, 19) + " IST";
+  if (id === "onboard") renderOnboard(data); else renderRun(data);
+  caption(s?.caption);
+}
+
+async function audit(act, btn) {
+  activate(btn);
+  if (act === "replay") {
+    try { const data = await api("/api/replay", "POST"); renderRun(data, "Replay of the previous envelope"); caption("Wahi signed request dobara bheja. Replay pakda gaya."); }
+    catch { $("#stage").innerHTML = `<div class="empty">Run any scenario first, then replay it.</div>`; }
+  } else {
+    try {
+      const t = await api("/api/ledger/tamper", "POST");
+      const led = await api("/api/ledger");
+      $("#stage").innerHTML = `<div class="verdict v-DENY"><div class="big">LOG TAMPERED</div><div class="why">Record #${t.tampered_seq}: ${esc(t.change)}.<br>
+        Verification: <span class="verify-bad">${esc(t.verify.reason)} at record #${t.verify.broken_at}</span>. Every later record is now unprovable.</div></div>
+        <section class="card"><h2>Evidence chain</h2>${chain(led.records, t.verify.broken_at)}</section>`;
+      caption("Kisi ne log mein DENY ko AUTO-EXECUTE kar diya. Hash chain toot gaya.");
+    } catch { $("#stage").innerHTML = `<div class="empty">Run a scenario first so there is something to tamper with.</div>`; }
+  }
+}
+
+function pillars(a) {
+  const m = a.mandate;
+  return `<div class="pillars">
+    <div class="pillar"><div class="k">Identity</div><div class="v">${esc(a.operator)}<br><span class="mono">${esc(a.issuer)}</span></div></div>
+    <div class="pillar"><div class="k">Represents</div><div class="v">${esc(a.represents)}<br><span class="mono">bound via ${esc(a.binding)}</span></div></div>
+    <div class="pillar"><div class="k">Authority</div><div class="v">${a.authority.map(esc).join("<br>")}</div></div>
+    <div class="pillar"><div class="k">Mandate</div><div class="v">${m.purpose.map(esc).join(", ")}<br>cap ${rs(m.per_txn_max_paise)} · human &gt; ${rs(m.human_approval_above_paise)}${m.payees.length ? "<br>payees: " + m.payees.map(esc).join(", ") : ""}</div></div>
+    <div class="pillar"><div class="k">Assurance</div><div class="v">${esc(a.assurance)}<br>consent: ${m.consent_purposes.map(esc).join(", ")}</div></div>
+  </div>`;
+}
+
+function gateCard(name, g) {
+  if (!g) return `<div class="gate notrun"><div class="head"><span class="name">${name}</span><span class="pill">NOT RUN</span></div><div class="chk"><span></span><span></span><span class="d">Identity failed, so the mandate is not trusted enough to evaluate.</span></div></div>`;
+  return `<div class="gate"><div class="head"><span class="name">${name}</span><span class="pill p-${g.decision}">${g.decision}</span></div>
+    ${g.checks.map(c => `<div class="chk o-${c.outcome}"><span class="ic">${ICON[c.outcome]}</span><span class="rid">${esc(c.rule_id)}</span>
+      <div><div class="ti">${esc(c.title)}</div><div class="d">${esc(c.detail)}</div></div></div>`).join("")}</div>`;
+}
+
+function chain(records, badSeq) {
+  return `<div class="chain">${records.map(r => {
+    const out = r.body.outcome || r.body.decision || "";
+    const bad = badSeq && r.seq >= badSeq;
+    return `<div class="blk ${esc(out)} ${bad ? "bad" : ""}"><div class="sq">#${r.seq} ${esc(r.kind.replace("_", " "))}</div>
+      <div>${esc(r.body.gate || out || "")}</div><div class="h">prev ${esc(r.prev_hash.slice(0, 10))}…</div><div class="h">hash ${esc(r.hash.slice(0, 10))}…</div></div>`;
+  }).join("")}</div>`;
+}
+
+function renderOnboard(d) {
+  $("#stage").innerHTML = `<div class="verdict v-AUTO_EXECUTE"><div class="big">4 AGENTS ONBOARDED</div><div class="why">Each manifest was checked for schema, issuer allowlist, issuer remit, signature, validity and revocation, then registered with its digest so later drift is visible.</div></div>
+    <div class="onb">${d.onboarded.map(o => `<section class="card"><div class="agent-name" style="font-size:16px">${esc(o.agent.agent_name)}</div>
+      <div class="mono">${esc(o.agent.agent_id)}</div>${o.gate.checks.map(c => `<div class="chk o-${c.outcome}"><span class="ic">${ICON[c.outcome]}</span><span class="rid">${esc(c.rule_id)}</span><div class="ti">${esc(c.title)}</div></div>`).join("")}</section>`).join("")}</div>
+    <section class="card"><div class="row" style="justify-content:space-between"><h2>Evidence chain</h2><button class="btn small" onclick="verifyChain()">Verify chain</button></div><div id="vres"></div>${chain(d.ledger)}</section>`;
+}
+
+function renderRun(d, title) {
+  const r = d.result, p = d.proposed, byGate = Object.fromEntries(r.gates.map(g => [g.gate, g]));
+  const trace = d.trace.map(t => `<div class="step ${t.source.startsWith("untrusted") ? "untrusted" : ""}"><span class="src">#${t.step} ${esc(t.kind)} · ${esc(t.source)}</span><div>${esc(t.summary)}</div>${t.content ? `<div class="content">“${esc(t.content)}”</div>` : ""}</div>`).join("");
+  $("#stage").innerHTML = `
+    ${title ? `<div class="tag">${esc(title)}</div>` : ""}
+    <div class="hero">
+      <section class="card"><h2>Agent · KYA manifest</h2><div class="agent-name">${esc(d.agent.agent_name)}</div><div class="mono">${esc(d.agent.agent_id)}</div>${pillars(d.agent)}</section>
+      <section class="card"><h2>Principal said (${esc(d.instruction.channel)})</h2><div class="say">“${esc(d.instruction.text)}”</div>
+        <div class="proposed"><span class="k">Agent proposes</span><span><b>${esc(p.action_type)}</b> · ${esc(p.purpose)}</span>
+          <span class="k">Amount</span><span class="amount">${rs(p.amount_paise)}</span>
+          ${p.payee ? `<span class="k">Payee</span><span class="mono" style="color:var(--text)">${esc(p.payee.value)}</span>` : ""}
+          ${p.data_categories ? `<span class="k">Data</span><span>${p.data_categories.map(esc).join(", ")}</span>` : ""}</div>
+        <div class="trace">${trace}</div></section>
+    </div>
+    <div class="verdict v-${r.outcome}"><div class="big">${LABEL[r.outcome]}</div><div class="why">${WHY[r.outcome]}${r.basis_rules.length ? `<br><span class="mono">basis: ${r.basis_rules.map(esc).join(" · ")}</span>` : ""}</div></div>
+    <div class="gates">${gateCard("1 · Identity", byGate.identity)}${gateCard("2 · Authority & mandate", byGate.mandate)}${gateCard("3 · Transaction risk", byGate.risk)}</div>
+    <div class="hero">
+      <section class="card rail"><h2>Rail adapter (mock)</h2><pre>${esc(JSON.stringify(d.rail ?? {note: "No rail for this action: data access only."}, null, 2))}</pre></section>
+      <section class="card json"><h2>Signed A2A evidence message (AtOM-style mock)</h2><pre>${esc(JSON.stringify(d.a2a_evidence, null, 2))}</pre></section>
+    </div>
+    <section class="card"><div class="row" style="justify-content:space-between"><h2>Evidence chain · hash-linked, Ed25519-signed</h2><button class="btn small" onclick="verifyChain()">Verify chain</button></div><div id="vres"></div>${chain(d.ledger)}</section>`;
+}
+
+function scrollChains() { document.querySelectorAll(".chain").forEach(c => c.scrollLeft = c.scrollWidth); }
+new MutationObserver(scrollChains).observe(document.getElementById("stage"), { childList: true });
+
+async function verifyChain() {
+  const v = await api("/api/ledger/verify");
+  $("#vres").innerHTML = v.ok ? `<div class="verify-ok">✓ ${v.checked} records verified · head ${esc(v.head.slice(0, 16))}…</div>`
+                              : `<div class="verify-bad">✕ ${esc(v.reason)} at record #${v.broken_at}</div>`;
+}
+
+$("#resetBtn").onclick = async () => { await api("/api/reset", "POST"); $("#stage").innerHTML = `<div class="empty">State reset. Start with <b>Onboard four agents</b>.</div>`; activate(null); caption(""); init(); };
+$("#capToggle").onchange = (e) => { captions = e.target.checked; caption(SCN.find(s => s.id === current)?.caption); };
+
+async function init() {
+  SCN = await api("/api/scenarios");
+  const h = await api("/api/health");
+  $("#clock").textContent = "demo clock " + h.demo_clock.replace("T", " ").slice(0, 19) + " IST";
+  nav();
+}
+init();
+</script>
+</body>
+</html>
